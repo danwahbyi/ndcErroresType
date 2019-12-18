@@ -21,7 +21,11 @@ public class Sara_SSE_ORM_900606
 	private String request = "";
 	private String fchIni  = "";
 	private String fchFin  = "";
-			
+		
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean esCasoSSE() 
 	{
 		try
@@ -101,6 +105,10 @@ public class Sara_SSE_ORM_900606
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean esCasoResiberOrmProvider() 
 	{
 		try
@@ -183,6 +191,10 @@ public class Sara_SSE_ORM_900606
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private boolean esCasoAcreditacionError()
 	{
 		try
@@ -230,6 +242,11 @@ public class Sara_SSE_ORM_900606
 		}
 	}
 	
+	/**
+	 * 
+	 * @param bean
+	 * @param bF
+	 */
 	public void analizar(BeanSheetExcel bean, BeanFormulario bF) 
 	{
 		try

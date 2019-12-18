@@ -11,18 +11,40 @@ import beans.BeanFormulario;
 import beans.BeanSheetExcel;
 import casos.ADI_FRAM_B0006;
 import casos.CodeShareOperatingCarrier;
+import casos.OC_FRAM_B0006;
+import casos.PMT_PPM_8006;
 import casos.Payment_PMT_PPM_12005;
 import casos.Payment_PMT_PPM_9017;
+import casos.Payment_SSE_ORM_9021;
 import casos.Resiber_SSE_ORM_9001;
+import casos.Resiber_SSE_ORM_9002;
 import casos.Resiber_SSE_ORM_9007;
+import casos.Resiber_SSE_ORM_9337;
 import casos.Sara_SSE_ORM_900606;
 
+/**
+ * 
+ * @author 0004611
+ *
+ */
 public class Proceso {
 	
+	
+	/**
+	 * 
+	 * @param responseKibana
+	 * @param codServ
+	 * @return
+	 */
 	private List<BeanSheetExcel> almacenarValores(String responseKibana, String codServ)
-	{
-		try
-		{
+	{	
+		//@timestamp 
+		String fechaS;
+		//request
+	    String requestS;
+	    //PNR
+	    String pnrS;
+	    try 	{
 			List<BeanSheetExcel> myList = new ArrayList<BeanSheetExcel>();
 			
 			JSONObject jsonResponse = new JSONObject(responseKibana.toString());
@@ -35,21 +57,17 @@ public class Proceso {
 				JSONObject source = objArray.getJSONObject("_source");
 				
 				//@timestamp 
-				String fH = source.getString("@timestamp");
+				fechaS = source.getString("@timestamp");
 				//request
-			    String cR = source.getString("request");
-				
-			    String[] cE  = new String[2];
-			    String[] dE  = new String[2];
-			    if (source.has("exception")) 
-			    {
+			    requestS = source.getString("request");
+			    String[] codigoE  = new String[2];
+			    String[] descripcionE  = new String[2];
+			    if (source.has("exception"))  {
 			    	JSONObject exception = source.getJSONObject("exception");
 			    	//Código de error y descripción
-					cE[0] = exception.getString("errorCode");
-				    if (exception.has("errorDescription")) dE[0] = exception.getString("errorDescription");
-			    } 
-			    else 
-			    {
+			    	codigoE[0] = exception.getString("errorCode");
+				    if (exception.has("errorDescription")) descripcionE[0] = exception.getString("errorDescription");
+			    } else  {
 			    	JSONObject kpi = source.getJSONObject("kpi");
 					JSONObject response = kpi.getJSONObject("response");
 					JSONObject errors = response.getJSONObject("errors");
@@ -60,15 +78,15 @@ public class Proceso {
 					{
 						JSONObject errorArray = error.getJSONObject(j);
 						//Código de error y descripción
-						cE[j] = errorArray.getString("shortText.string");
-					    dE[j] = errorArray.getString("value.string");
+						codigoE[j] = errorArray.getString("shortText.string");
+						descripcionE[j] = errorArray.getString("value.string");
 					    
 					    //Actualmente sólo admitimos 2 valores
-					    if(j==1) break;
+					    //DWI: Se comenta: if(j==1) break;
 					}
 			    }
 			    
-			    String oId = "";
+			    String orderIdS = "";
 			    //Obtenemos el orderID en OrderCreate
 			    if ("OC".equals(codServ)) {
 				    JSONObject kpi = source.getJSONObject("kpi");
@@ -78,10 +96,10 @@ public class Proceso {
 					JSONObject orderItems = query.getJSONObject("orderItems");
 					JSONObject shoppingResponse = orderItems.getJSONObject("shoppingResponse");
 					JSONObject responseID = shoppingResponse.getJSONObject("responseID");
-					oId = responseID.getString("value.string");
+					orderIdS = responseID.getString("value.string");
 			    }
 			    
-			    BeanSheetExcel bSG = new BeanSheetExcel(fH, cR, cE, dE, oId);
+			    BeanSheetExcel bSG = new BeanSheetExcel(fechaS, requestS, codigoE, descripcionE, orderIdS);
 			    myList.add(bSG);
 			}
 			
@@ -92,14 +110,17 @@ public class Proceso {
 			}			
 			
 			return myList;
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			VentanaPrincipal.showError(e.getMessage());
 			return null;
 		}
 	}
 	
+	/**
+	 * 
+	 * @param lista
+	 */
 	private void agruparPorCodigoYDescripcion(List<BeanSheetExcel> lista)
 	{
 
@@ -136,6 +157,11 @@ public class Proceso {
 		});
 	}
 	
+	/**
+	 * 
+	 * @param lista
+	 * @param bF
+	 */
 	private void analizarCasos(List<BeanSheetExcel> lista, BeanFormulario bF)
 	{
 		try
@@ -144,19 +170,26 @@ public class Proceso {
 			{
 				//Analizaremos el código de error que primero se produzca... (parece que se almacenan con un PUSH)
 				String codError = bean.getCodError()[1]!=null?bean.getCodError()[1]:bean.getCodError()[0];
-				
 				switch(codError) 
 				{
+					case "SSE_ORM_9337": 
+						Resiber_SSE_ORM_9337 r9337 = new Resiber_SSE_ORM_9337();
+						r9337.analizar(bean);  
+					break;
 					case "SSE_ORM_1000601": 
 						CodeShareOperatingCarrier csoc = new CodeShareOperatingCarrier();
 						csoc.analizar(bean);  
 					break;
-					
+					//DWI: Resiber
 					case "SSE_ORM_9001": 
 						Resiber_SSE_ORM_9001 r9001 = new Resiber_SSE_ORM_9001();
 						r9001.analizar(bean);  
 					break;
-					
+					//DWI: Resiber
+					case "SSE_ORM_9002": 
+						Resiber_SSE_ORM_9002 r9002 = new Resiber_SSE_ORM_9002();
+						r9002.analizar(bean);  
+					break;
 					case "SSE_ORM_9007": 
 						Resiber_SSE_ORM_9007 r9007 = new Resiber_SSE_ORM_9007();
 						r9007.analizar(bean);  
@@ -177,6 +210,18 @@ public class Proceso {
 						payNetplus.analizar(bean);
 					break;
 					
+					//DWI: TIME_OUT
+					case "PMT_PPM_8006":
+					PMT_PPM_8006 payPPM = new PMT_PPM_8006();
+					payPPM.analizar(bean);
+					break;
+					
+					//DWI:
+					case "SSE_ORM_9021":
+						Payment_SSE_ORM_9021 paySSE = new Payment_SSE_ORM_9021();
+						paySSE.analizar(bean);
+					break;
+					
 					case "FRAM_B0006":
 					{
 						switch(bF.getCodServicio())
@@ -184,10 +229,15 @@ public class Proceso {
 						   case "ADI":
 							   ADI_FRAM_B0006 adiFram = new ADI_FRAM_B0006();
 							   adiFram.analizar(bean);
+						   case "OC":
+							   OC_FRAM_B0006 ocFram = new OC_FRAM_B0006();
+							   ocFram.analizar(bean);
 						   break;
 						}
 					}
-					break;
+					default:
+						
+						break;
 				}	
 			}
 		}
@@ -197,6 +247,10 @@ public class Proceso {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param listCheckServ
+	 */
 	public void ejecutar(List<BeanFormulario> listCheckServ) 
 	{
 		try

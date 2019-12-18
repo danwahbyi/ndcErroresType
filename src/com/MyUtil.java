@@ -279,13 +279,12 @@ public class MyUtil {
 			Node nodoDesc = nlDescription.item(0);
 			String s = nodoDesc!=null?nodoDesc.getTextContent():null;
 			
-			//Puede estar en castellano !!!
+			//DWI:Puede estar en castellano !!!
 			if (s == null) {
 				NodeList nlDescripcion = doc.getElementsByTagName("descripcion");
 				Node nodoDescripcion = nlDescripcion.item(0);
 				s = nodoDescripcion!=null?nodoDescripcion.getTextContent():null;
-			}
-			
+			}		
 			return s;
 		}
 		catch (Exception e) {
@@ -293,7 +292,5 @@ public class MyUtil {
 			escribirTraza("ERROR", e.getMessage());
 			return null;
 		}
-	}
-	
-	
+	}	
 }

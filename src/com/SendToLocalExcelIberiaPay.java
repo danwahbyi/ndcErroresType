@@ -27,7 +27,8 @@ public class SendToLocalExcelIberiaPay {
 	{
 		try 
 		{ 
-			List<BeanSheetExcelIberiaPay> lista = (List<BeanSheetExcelIberiaPay>) o;
+			List<BeanSheetExcelIberiaPay> o2 = (List<BeanSheetExcelIberiaPay>) o;
+			List<BeanSheetExcelIberiaPay> lista = o2;
 			//String textPath = "C:\\Users\\0015305\\Documents\\IBERIA\\IberiaPay.xlsx";
 			String textPath = bF.getRutaExcel().replace("\\", "\\\\");
 			

@@ -326,7 +326,12 @@ public class VentanaPrincipal implements ActionListener {
 		frame.getContentPane().add(chckbxAnalizar);
 		
 		textPane = new JTextPane() {
-		    @Override
+		    /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
 		    public boolean getScrollableTracksViewportWidth() {
 		        return getUI().getPreferredSize(this).width <= getParent().getSize().width;
 		    }

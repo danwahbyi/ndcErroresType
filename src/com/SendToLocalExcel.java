@@ -31,7 +31,9 @@ public class SendToLocalExcel {
 			String hoja = MyUtil.getNombrePestaniaExcel(codServ);
 			boolean agrupar = bF.isRespuestaAgrupada();
 			boolean total = bF.isTotal();
-			List<BeanSheetExcel> lista = (List<BeanSheetExcel>) o;
+			@SuppressWarnings("unchecked")
+			List<BeanSheetExcel> o2 = (List<BeanSheetExcel>) o;
+			List<BeanSheetExcel> lista = o2;
 			//String textPath = "C:\\Users\\0015305\\Documents\\IBERIA\\Errores_20191028-20191103.xlsx";
 			String textPath = bF.getRutaExcel().replace("\\", "\\\\");
 			
@@ -61,7 +63,7 @@ public class SendToLocalExcel {
 					//This data needs to be written (Object[])
 			        Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
 					
-			        int numCasos = 0;
+			   
 					for (int i=0; i<lista.size(); i++) {
 						BeanSheetExcel bean = (BeanSheetExcel) lista.get(i);
 						String impCodError = bean.getCodError()[0] + (bean.getCodError()[1]!=null?"\n" + bean.getCodError()[1]:"");
@@ -102,11 +104,11 @@ public class SendToLocalExcel {
 			            }
 			        }
 			        
-			        if (total) {
-			        	String celda = MyUtil.getUbicacionPestaniaCero(codServ, lista.get(0).getFechaLocal().substring(0, 10));
-			        	//ValueRange valorCelda = new ValueRange().setValues(Arrays.asList(Arrays.asList(numCasos)));
-			        	//UpdateValuesResponse actualizar = sheetsService.spreadsheets().values().update(SPREADSHEET_ID, "0!"+celda, valorCelda).setValueInputOption("RAW").execute();
-			        }
+			        //if (total) {
+			        //String celda = MyUtil.getUbicacionPestaniaCero(codServ, lista.get(0).getFechaLocal().substring(0, 10));
+			       	//ValueRange valorCelda = new ValueRange().setValues(Arrays.asList(Arrays.asList(numCasos)));
+			       	//UpdateValuesResponse actualizar = sheetsService.spreadsheets().values().update(SPREADSHEET_ID, "0!"+celda, valorCelda).setValueInputOption("RAW").execute();
+			        //}
 			        
 			        VentanaPrincipal.showInfo("3) A partir de la fila: " + filaInicio);
 			        		            
